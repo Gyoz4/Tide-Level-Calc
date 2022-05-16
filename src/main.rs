@@ -1,4 +1,4 @@
-use std::io;
+use std::io::{self, stdout, Write};
 
 fn main() {
     'outer: loop {
@@ -52,6 +52,19 @@ fn main() {
         height_arr[5] = height_arr[4] + 1.0 * time_step;
 
         //TODO: calculate float time
+        let top_time_slot = time_slot(&mut height_arr, min_height);
+        if top_time_slot == 10.0 {
+            println!("Couldn't find a fitting time slot");
+            pause();
+            break 'outer;
+        }
+
+        let mut x:[f32; 3] = [0.0; 3];
+        //x[0] = time_step * top_time_slot;
+
+        let mut y:[f32; 3] = [0.0; 3];
+
+        // x[2] = ((y[1] - y[2])*x[0] + (y[2] - y[0])*x[1]) / (y[1] - y[0]);
 
         /////////////////////////////////////////////////////////////////
         // output the time
@@ -67,3 +80,20 @@ fn main() {
     }    
 }
 
+fn time_slot (arr: &mut [f32], min: f32) -> f32{
+    if arr[0] > min { return 0.0;} 
+    else if arr[1] > min {return 1.0;}
+    else if arr[2] > min {return 2.0;}
+    else if arr[3] > min {return 3.0;}
+    else if arr[4] > min {return 4.0;}
+    else if arr[5] > min {return 5.0;}
+
+    return 10.0;
+}
+
+fn pause() {
+    let mut stdout = stdout();
+    stdout.write(b"Press Enter to continue...").unwrap();
+    stdout.flush().unwrap();
+    io::Read::read(&mut io::stdin(), &mut [0]).unwrap();
+}
